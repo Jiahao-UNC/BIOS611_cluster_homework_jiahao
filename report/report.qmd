@@ -41,3 +41,19 @@ For each dataset \((n, L)\), we run **K-means** with `nstart = 20` and `iter.max
 # Failure points per dimension
 fail <- read.csv("../results/tables/t1_failure_points.csv")
 fail
+
+# Task 2 — Concentric Shells, Spectral Clustering, and the Gap Statistic
+
+## Idea in one breath
+We now switch to **concentric rings** in 2D. Each ring is a true cluster (so the true cluster count is the number of shells). We gradually shrink the overall scale via the **max radius** \(R\), from 10 down to 1, and run **spectral clustering** (epsilon-neighborhood graph, \(d_{\text{th}}=1.0\)) inside the Gap Statistic to estimate \(\hat{k}\).
+
+## What to look for
+- Dashed horizontal line = true cluster count (number of shells).  
+- Red dotted vertical line = the first radius \(R_{\text{fail}}\) where we begin to **underestimate** \(\hat{k}<K_{\text{true}}\).  
+- Red points = underestimates.
+
+![](../results/figs/t2_gap_curve.png){width=92%}
+
+```{r}
+fail2 <- read.csv("../results/tables/t2_failure_points.csv")
+fail2 EOF
