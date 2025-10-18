@@ -1,0 +1,24 @@
+# ==== Paths ====
+RAW_DIR       := data/raw
+PROC_DIR      := data/processed
+FIG_DIR       := results/figs
+TAB_DIR       := results/tables
+REPORT_DIR    := report
+SCRIPTS_DIR   := scripts
+
+# ==== Default target ====
+.PHONY: all
+all: help
+
+# ==== Setup (install R packages) ====
+.PHONY: setup
+setup:
+	# The next line MUST start with a real TAB
+	Rscript $(SCRIPTS_DIR)/00_setup.R
+
+# ==== Help ====
+.PHONY: help
+help:
+	# The next lines MUST start with a real TAB
+	@echo "make setup   # Install R packages"
+	@echo "make         # Show this help (we'll add full pipeline later)"
