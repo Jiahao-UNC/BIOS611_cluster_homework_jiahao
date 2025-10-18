@@ -89,39 +89,59 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="results-quick-view" class="level2">
 <h2 class="anchored" data-anchor-id="results-quick-view">Results (Quick View)</h2>
-<p><img src="../results/figs/t1_gap_curve.png" class="img-fluid" style="width:90.0%"></p>
-</section>
-</section>
-<section id="preview-top-rows-of-the-summary-and-failure-points" class="level1">
-<h1>Preview top rows of the summary and failure points</h1>
-<p>summary &lt;- read.csv(“../results/tables/t1_gap_summary.csv”) fail &lt;- read.csv(“../results/tables/t1_failure_points.csv”) head(summary, 10) fail</p>
-</section>
-<section id="task-1-results-plain-english-recap" class="level1">
-<h1>Task 1 — Results (Plain-English Recap)</h1>
-<section id="what-we-looked-at" class="level2">
-<h2 class="anchored" data-anchor-id="what-we-looked-at">What we looked at</h2>
-<p>We generated hypercube clusters in different dimensions (n = 2, 3, 4, 5, 6).<br>
-For each dimension, every vertex of the n-dimensional cube was a true cluster center, so the true number of clusters is (2^n). We kept noise at (= 1) and moved the cluster centers farther/closer by changing the edge length (L) from 10 down to 1.</p>
-</section>
-<section id="how-we-measured-success" class="level2">
-<h2 class="anchored" data-anchor-id="how-we-measured-success">How we measured success</h2>
-<p>For each ((n, L)), we ran K-means (<code>nstart=20</code>, <code>iter.max=50</code>) and used the Gap Statistic to pick (). The rule is the standard Tibshirani one: choose the smallest (k) with ((k) (k+1) - (k+1)).</p>
-</section>
-<section id="what-the-figure-says-at-a-glance" class="level2">
-<h2 class="anchored" data-anchor-id="what-the-figure-says-at-a-glance">What the figure says at a glance</h2>
-<ul>
-<li>The dashed <strong>horizontal</strong> lines are the true cluster counts (2^n).<br>
-</li>
-<li>The <strong>red dotted vertical</strong> line in each facet is the first edge length where we <strong>start underestimating</strong> the number of clusters — we call it (L_{}).<br>
-</li>
-<li>Black points are “okay” estimates; <strong>red points</strong> are underestimates.</li>
-</ul>
 <p><img src="../results/figs/t1_gap_curve.png" class="img-fluid" style="width:92.0%"></p>
 </section>
-<section id="where-the-method-starts-to-slip" class="level2">
-<h2 class="anchored" data-anchor-id="where-the-method-starts-to-slip">Where the method starts to slip</h2>
-<p>The table below prints, for each dimension (n), the first edge length where ( &lt; 2^n) when we scan (L) from big to small. That’s our practical “failure point.”</p>
-<p>fail &lt;- read.csv(“../results/tables/t1_failure_points.csv”) fail ```</p>
+</section>
+<section id="failure-points-per-dimension" class="level1">
+<h1>Failure points per dimension</h1>
+<p>fail &lt;- read.csv(“../results/tables/t1_failure_points.csv”) fail</p>
+</section>
+<section id="task-2-concentric-shells-spectral-clustering-and-the-gap-statistic" class="level1">
+<h1>Task 2 — Concentric Shells, Spectral Clustering, and the Gap Statistic</h1>
+<section id="idea-in-one-breath" class="level2">
+<h2 class="anchored" data-anchor-id="idea-in-one-breath">Idea in one breath</h2>
+<p>We now switch to <strong>concentric rings</strong> in 2D. Each ring is a true cluster (so the true cluster count is the number of shells). We gradually shrink the overall scale via the <strong>max radius</strong> (R), from 10 down to 1, and run <strong>spectral clustering</strong> (epsilon-neighborhood graph, (d_{}=1.0)) inside the Gap Statistic to estimate ().</p>
+</section>
+<section id="what-to-look-for" class="level2">
+<h2 class="anchored" data-anchor-id="what-to-look-for">What to look for</h2>
+<ul>
+<li>Dashed horizontal line = true cluster count (number of shells).<br>
+</li>
+<li>Red dotted vertical line = the first radius (R_{}) where we begin to <strong>underestimate</strong> (&lt;K_{}).<br>
+</li>
+<li>Red points = underestimates.</li>
+</ul>
+<p><img src="../results/figs/t2_gap_curve.png" class="img-fluid" style="width:92.0%"></p>
+<p>fail2 &lt;- read.csv(“../results/tables/t2_failure_points.csv”) fail2 EOF</p>
+</section>
+</section>
+<section id="task-2-failure-point-explained-effect-of-d_threshold" class="level1">
+<h1>Task 2 — Failure Point Explained &amp; Effect of d_threshold</h1>
+<section id="what-the-failure-point-means-as-max_radius-decreases" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-failure-point-means-as-max_radius-decreases">What the failure point means as max_radius decreases</h2>
+<p>We place (n_{}) concentric rings in 2D; each ring is a true cluster. Their radii are (r_s = s ) for (s=1,,n_{}), so the radial gap between adjacent rings is (r = ). Spectral clustering builds an ()-neighborhood graph (connect two points if their distance &lt; (d_{})). With small noise, same-ring points connect densely while different rings remain disconnected—<strong>if</strong> the gap is large.</p>
+<p>As we <strong>decrease max_radius</strong>, the gap (r) shrinks. Sooner or later, due to radial jitter and angular differences, some cross-ring pairs fall <strong>within</strong> (d_{}). The graph starts to form <strong>bridges</strong> across rings; the Laplacian’s smallest eigenvectors then mix rings, and K-means on those eigenvectors merges clusters. That’s when the Gap+spectral pipeline begins to <strong>underestimate</strong> the true number of rings. The <strong>failure point (R_{})</strong> in the plot is exactly the first max_radius (scanned from large to small) where the estimate () drops below the truth.</p>
+<p>A rough mental model: [ r d_{} . ]</p>
+</section>
+<section id="how-changing-d_-shifts-the-failure-point" class="level2">
+<h2 class="anchored" data-anchor-id="how-changing-d_-shifts-the-failure-point">How changing (d_{}) shifts the failure point</h2>
+<ul>
+<li><strong>Smaller (d_{}=0.8)</strong> (sparser graph): harder to create accidental cross-ring edges; underestimation appears <strong>later</strong>.<br>
+⇒ (R_{}) moves <strong>down</strong> (you need a <strong>smaller</strong> max_radius before failure).</li>
+<li><strong>Larger (d_{}=1.2)</strong> (denser graph): easier to bridge adjacent rings; underestimation appears <strong>earlier</strong>.<br>
+⇒ (R_{}) moves <strong>up</strong> (failure at a <strong>larger</strong> max_radius).</li>
+</ul>
+<p>Rule of thumb: [ R_{} ;; n_{} d_{} . ] So (R_{}) grows with (d_{}) and with stricter separation needs in higher noise or denser sampling.</p>
+</section>
+<section id="practical-notes" class="level2">
+<h2 class="anchored" data-anchor-id="practical-notes">Practical notes</h2>
+<ul>
+<li>More noise or more points per ring → more chances of cross-ring neighbors → earlier failure (larger (R_{})).<br>
+</li>
+<li>If rings are angularly clumped, local bridges form sooner.<br>
+</li>
+<li>Tuning (d_{}) is key: too small fragments the graph; too large over-connects it.</li>
+</ul>
 </section>
 </section>
 

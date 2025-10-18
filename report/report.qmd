@@ -57,3 +57,35 @@ We now switch to **concentric rings** in 2D. Each ring is a true cluster (so the
 ```{r}
 fail2 <- read.csv("../results/tables/t2_failure_points.csv")
 fail2 EOF
+
+# Task 2 — Failure Point Explained & Effect of d_threshold
+
+## What the failure point means as max_radius decreases
+We place \(n_{\text{shells}}\) concentric rings in 2D; each ring is a true cluster. Their radii are
+\(r_s = s \cdot \frac{\text{max\_radius}}{n_{\text{shells}}}\) for \(s=1,\dots,n_{\text{shells}}\), so the radial gap between adjacent rings is
+\(\Delta r = \frac{\text{max\_radius}}{n_{\text{shells}}}\). Spectral clustering builds an \(\varepsilon\)-neighborhood graph (connect two points if their distance < \(d_{\text{th}}\)). With small noise, same-ring points connect densely while different rings remain disconnected—**if** the gap is large.
+
+As we **decrease max_radius**, the gap \(\Delta r\) shrinks. Sooner or later, due to radial jitter and angular differences, some cross-ring pairs fall **within** \(d_{\text{th}}\). The graph starts to form **bridges** across rings; the Laplacian’s smallest eigenvectors then mix rings, and K-means on those eigenvectors merges clusters. That’s when the Gap+spectral pipeline begins to **underestimate** the true number of rings. The **failure point \(R_{\text{fail}}\)** in the plot is exactly the first max_radius (scanned from large to small) where the estimate \(\hat{k}\) drops below the truth.
+
+A rough mental model:
+\[
+\text{failure when}\quad \Delta r \approx \frac{\text{max\_radius}}{n_{\text{shells}}} \lesssim \text{(effective proximity at scale } d_{\text{th}} \text{ + noise)}.
+\]
+
+## How changing \(d_{\text{th}}\) shifts the failure point
+- **Smaller \(d_{\text{th}}=0.8\)** (sparser graph): harder to create accidental cross-ring edges; underestimation appears **later**.  
+  ⇒ \(R_{\text{fail}}\) moves **down** (you need a **smaller** max_radius before failure).
+- **Larger \(d_{\text{th}}=1.2\)** (denser graph): easier to bridge adjacent rings; underestimation appears **earlier**.  
+  ⇒ \(R_{\text{fail}}\) moves **up** (failure at a **larger** max_radius).
+
+Rule of thumb:
+\[
+R_{\text{fail}} \;\propto\; n_{\text{shells}} \cdot d_{\text{th}} \times \text{(noise factor)}.
+\]
+So \(R_{\text{fail}}\) grows with \(d_{\text{th}}\) and with stricter separation needs in higher noise or denser sampling.
+
+## Practical notes
+- More noise or more points per ring → more chances of cross-ring neighbors → earlier failure (larger \(R_{\text{fail}}\)).  
+- If rings are angularly clumped, local bridges form sooner.  
+- Tuning \(d_{\text{th}}\) is key: too small fragments the graph; too large over-connects it.
+
