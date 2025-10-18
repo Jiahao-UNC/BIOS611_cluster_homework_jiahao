@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -142,6 +177,37 @@ ul.task-list li input[type="checkbox"] {
 </li>
 <li>Tuning (d_{}) is key: too small fragments the graph; too large over-connects it.</li>
 </ul>
+</section>
+</section>
+<section id="task-2-sensitivity-to-d_threshold-0.8-vs-1.0-vs-1.2" class="level1">
+<h1>Task 2 — Sensitivity to <code>d_threshold</code> (0.8 vs 1.0 vs 1.2)</h1>
+<p>We compare three epsilon thresholds for the spectral graph: <strong>0.8</strong>, <strong>1.0</strong>, and <strong>1.2</strong>.<br>
+Smaller thresholds make the graph sparser (protect against over-connecting rings),<br>
+while larger thresholds make it denser (rings merge sooner).</p>
+<p><strong>Expected pattern:</strong> (R_{}(0.8) R_{}(1.0) R_{}(1.2)).</p>
+<section id="curves" class="level3">
+<h3 class="anchored" data-anchor-id="curves">Curves</h3>
+<p><em>(Top: tighter graph; Middle: baseline; Bottom: looser graph)</em></p>
+<p><img src="../results/figs/t2_gap_curve_08.png" class="img-fluid" style="width:92.0%"> <img src="../results/figs/t2_gap_curve.png" class="img-fluid" style="width:92.0%"> <img src="../results/figs/t2_gap_curve_12.png" class="img-fluid" style="width:92.0%"></p>
+</section>
+<section id="failure-radii-table" class="level3">
+<h3 class="anchored" data-anchor-id="failure-radii-table">Failure radii table</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fail08 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../results/tables/t2_failure_points_08.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>fail10 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../results/tables/t2_failure_points.csv"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>fail12 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../results/tables/t2_failure_points_12.csv"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">d_threshold =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">1.0</span>, <span class="fl">1.2</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">R_fail      =</span> <span class="fu">c</span>(fail08<span class="sc">$</span>R_fail[<span class="dv">1</span>], fail10<span class="sc">$</span>R_fail[<span class="dv">1</span>], fail12<span class="sc">$</span>R_fail[<span class="dv">1</span>])</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  d_threshold R_fail
+1         0.8     10
+2         1.0     10
+3         1.2     10</code></pre>
+</div>
+</div>
 </section>
 </section>
 

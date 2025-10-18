@@ -89,3 +89,29 @@ So \(R_{\text{fail}}\) grows with \(d_{\text{th}}\) and with stricter separation
 - If rings are angularly clumped, local bridges form sooner.  
 - Tuning \(d_{\text{th}}\) is key: too small fragments the graph; too large over-connects it.
 
+
+# Task 2 — Sensitivity to `d_threshold` (0.8 vs 1.0 vs 1.2)
+
+We compare three epsilon thresholds for the spectral graph: **0.8**, **1.0**, and **1.2**.  
+Smaller thresholds make the graph sparser (protect against over-connecting rings),  
+while larger thresholds make it denser (rings merge sooner).
+
+**Expected pattern:** \(R_{\text{fail}}(0.8) \lt R_{\text{fail}}(1.0) \lt R_{\text{fail}}(1.2)\).
+
+### Curves
+*(Top: tighter graph; Middle: baseline; Bottom: looser graph)*
+
+![](../results/figs/t2_gap_curve_08.png){width=92%}
+![](../results/figs/t2_gap_curve.png){width=92%}
+![](../results/figs/t2_gap_curve_12.png){width=92%}
+
+### Failure radii table
+```{r}
+fail08 <- read.csv("../results/tables/t2_failure_points_08.csv")
+fail10 <- read.csv("../results/tables/t2_failure_points.csv")
+fail12 <- read.csv("../results/tables/t2_failure_points_12.csv")
+
+data.frame(
+  d_threshold = c(0.8, 1.0, 1.2),
+  R_fail      = c(fail08$R_fail[1], fail10$R_fail[1], fail12$R_fail[1])
+)
