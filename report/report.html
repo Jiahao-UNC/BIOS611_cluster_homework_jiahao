@@ -64,7 +64,66 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This is my cluster homework</p>
+<section id="task-1-hypercube-clusters-k-means-and-the-gap-statistic" class="level1">
+<h1>Task 1 — Hypercube Clusters, K-means, and the Gap Statistic</h1>
+<section id="objective" class="level2">
+<h2 class="anchored" data-anchor-id="objective">Objective</h2>
+<p>Evaluate how accurately the Gap Statistic (with Tibshirani’s selection rule) recovers the true number of clusters in synthetic <strong>hypercube</strong> datasets as the <strong>inter-cluster separation</strong> (edge length <em>L</em>) decreases and the <strong>dimension</strong> <em>n</em> varies.</p>
+</section>
+<section id="data-generation" class="level2">
+<h2 class="anchored" data-anchor-id="data-generation">Data Generation</h2>
+<p>For each dimension ( n {6,5,4,3,2} ), we construct a hypercube in (^n) whose vertices are at coordinates ({0, L}^n). Each vertex is treated as a true cluster center. The true number of clusters is therefore (K_{} = 2^n). Around each center, we sample points from an <strong>isotropic Gaussian</strong>: [ X (, ^2 I_n), = 1.0, ] with <strong>100 points per cluster</strong>. For each (n), we sweep the edge length (L) from 10 down to 1 (step 1), which gradually reduces inter-cluster separation.</p>
+</section>
+<section id="clustering-model-selection" class="level2">
+<h2 class="anchored" data-anchor-id="clustering-model-selection">Clustering + Model Selection</h2>
+<p>For each dataset ((n, L)), we run <strong>K-means</strong> with <code>nstart = 20</code> and <code>iter.max = 50</code>. To estimate the number of clusters ( ), we apply the <strong>Gap Statistic</strong> (R <code>cluster::clusGap</code>) with: - Reference bootstrap samples: <strong>B = 50</strong> (balanced for stability and runtime). - Upper cap for search: (K_{} = (2^n + 3, 12)).</p>
+<p><strong>Selection rule (Tibshirani et al.)</strong>: choose the smallest (k) such that [ (k) (k+1) - (k+1). ]</p>
+</section>
+<section id="outputs" class="level2">
+<h2 class="anchored" data-anchor-id="outputs">Outputs</h2>
+<ul>
+<li><strong>Summary table</strong>: <code>results/tables/t1_gap_summary.csv</code> (columns: <code>n</code>, <code>side_length</code>, <code>K_true</code>, <code>k_hat</code>, etc.).</li>
+<li><strong>Failure-point table</strong>: <code>results/tables/t1_failure_points.csv</code>, which records for each dimension (n) the first edge length (L_{}) (scanning from large to small) where ( &lt; K_{} ).</li>
+<li><strong>Figure</strong>: <code>results/figs/t1_gap_curve.png</code> showing () versus (L), faceted by (n), with dashed horizontal lines at (K_{}) and a red dotted vertical line at (L_{}).</li>
+</ul>
+</section>
+<section id="results-quick-view" class="level2">
+<h2 class="anchored" data-anchor-id="results-quick-view">Results (Quick View)</h2>
+<p><img src="../results/figs/t1_gap_curve.png" class="img-fluid" style="width:90.0%"></p>
+</section>
+</section>
+<section id="preview-top-rows-of-the-summary-and-failure-points" class="level1">
+<h1>Preview top rows of the summary and failure points</h1>
+<p>summary &lt;- read.csv(“../results/tables/t1_gap_summary.csv”) fail &lt;- read.csv(“../results/tables/t1_failure_points.csv”) head(summary, 10) fail</p>
+</section>
+<section id="task-1-results-plain-english-recap" class="level1">
+<h1>Task 1 — Results (Plain-English Recap)</h1>
+<section id="what-we-looked-at" class="level2">
+<h2 class="anchored" data-anchor-id="what-we-looked-at">What we looked at</h2>
+<p>We generated hypercube clusters in different dimensions (n = 2, 3, 4, 5, 6).<br>
+For each dimension, every vertex of the n-dimensional cube was a true cluster center, so the true number of clusters is (2^n). We kept noise at (= 1) and moved the cluster centers farther/closer by changing the edge length (L) from 10 down to 1.</p>
+</section>
+<section id="how-we-measured-success" class="level2">
+<h2 class="anchored" data-anchor-id="how-we-measured-success">How we measured success</h2>
+<p>For each ((n, L)), we ran K-means (<code>nstart=20</code>, <code>iter.max=50</code>) and used the Gap Statistic to pick (). The rule is the standard Tibshirani one: choose the smallest (k) with ((k) (k+1) - (k+1)).</p>
+</section>
+<section id="what-the-figure-says-at-a-glance" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-figure-says-at-a-glance">What the figure says at a glance</h2>
+<ul>
+<li>The dashed <strong>horizontal</strong> lines are the true cluster counts (2^n).<br>
+</li>
+<li>The <strong>red dotted vertical</strong> line in each facet is the first edge length where we <strong>start underestimating</strong> the number of clusters — we call it (L_{}).<br>
+</li>
+<li>Black points are “okay” estimates; <strong>red points</strong> are underestimates.</li>
+</ul>
+<p><img src="../results/figs/t1_gap_curve.png" class="img-fluid" style="width:92.0%"></p>
+</section>
+<section id="where-the-method-starts-to-slip" class="level2">
+<h2 class="anchored" data-anchor-id="where-the-method-starts-to-slip">Where the method starts to slip</h2>
+<p>The table below prints, for each dimension (n), the first edge length where ( &lt; 2^n) when we scan (L) from big to small. That’s our practical “failure point.”</p>
+<p>fail &lt;- read.csv(“../results/tables/t1_failure_points.csv”) fail ```</p>
+</section>
+</section>
 
 </main>
 <!-- /main column -->

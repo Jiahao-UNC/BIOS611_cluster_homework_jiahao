@@ -35,9 +35,34 @@ For each dataset \((n, L)\), we run **K-means** with `nstart = 20` and `iter.max
 
 ## Results (Quick View)
 
-![](../results/figs/t1_gap_curve.png){width=92%}
+![](../results/figs/t1_gap_curve.png){width=90%}
 
 ```{r}
-# Failure points per dimension
-fail <- read.csv("../results/tables/t1_failure_points.csv")
+# Preview top rows of the summary and failure points
+summary <- read.csv("../results/tables/t1_gap_summary.csv")
+fail    <- read.csv("../results/tables/t1_failure_points.csv")
+head(summary, 10)
 fail
+
+# Task 1 — Results (Plain-English Recap)
+
+## What we looked at
+We generated hypercube clusters in different dimensions (n = 2, 3, 4, 5, 6).  
+For each dimension, every vertex of the n-dimensional cube was a true cluster center, so the true number of clusters is \(2^n\). We kept noise at \(\sigma = 1\) and moved the cluster centers farther/closer by changing the edge length \(L\) from 10 down to 1.
+
+## How we measured success
+For each \((n, L)\), we ran K-means (`nstart=20`, `iter.max=50`) and used the Gap Statistic to pick \(\hat{k}\). The rule is the standard Tibshirani one: choose the smallest \(k\) with \(\text{Gap}(k) \ge \text{Gap}(k+1) - \text{SE}(k+1)\).
+
+## What the figure says at a glance
+- The dashed **horizontal** lines are the true cluster counts \(2^n\).  
+- The **red dotted vertical** line in each facet is the first edge length where we **start underestimating** the number of clusters — we call it \(L_{\text{fail}}\).  
+- Black points are “okay” estimates; **red points** are underestimates.
+
+![](../results/figs/t1_gap_curve.png){width=92%}
+
+## Where the method starts to slip
+The table below prints, for each dimension \(n\), the first edge length where \(\hat{k} < 2^n\) when we scan \(L\) from big to small. That’s our practical “failure point.”
+
+```{r}
+fail <- read.csv("../results/tables/t1_failure_points.csv")
+fail ```
