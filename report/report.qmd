@@ -115,3 +115,23 @@ data.frame(
   d_threshold = c(0.8, 1.0, 1.2),
   R_fail      = c(fail08$R_fail[1], fail10$R_fail[1], fail12$R_fail[1])
 )
+
+## Task 2 — Sensitivity to the distance threshold (0.8 vs 1.0 vs 1.2)
+
+We now compare three epsilon thresholds used to build the similarity graph.  
+A smaller threshold makes the graph sparser and delays the failure point;  
+a larger threshold makes it denser and causes earlier underestimation.
+
+![](../results/figs/t2_gap_curve_m4_elbow_d08.png){width=90%}
+![](../results/figs/t2_gap_curve_m4_tib_d10.png){width=90%}
+![](../results/figs/t2_gap_curve_m4_elbow_d12.png){width=90%}
+
+```{r}
+fail08 <- read.csv("../results/tables/t2_failure_points_m4_elbow_d08.csv")
+fail10 <- read.csv("../results/tables/t2_failure_points_m4_tib_d10.csv")
+fail12 <- read.csv("../results/tables/t2_failure_points_m4_elbow_d12.csv")
+data.frame(
+  d_threshold = c(0.8, 1.0, 1.2),
+  R_fail = c(fail08$R_fail[1], fail10$R_fail[1], fail12$R_fail[1])
+)
+
