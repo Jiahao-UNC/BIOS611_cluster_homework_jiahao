@@ -135,3 +135,9 @@ data.frame(
   R_fail = c(fail08$R_fail[1], fail10$R_fail[1], fail12$R_fail[1])
 )
 
+
+## Task 2 — Note on 3D shells and why \(\hat{k}\) can be 1 across radii
+
+In our 3D concentric-shell setup we sweep the maximum radius while keeping a **fixed distance threshold** \(d_{\text{th}}\) and a **fixed number of points per shell**. Because a sphere’s surface area scales as \(4\pi r^2\), increasing the radius **reduces point density** on each shell and **increases** the typical within-shell neighbor spacing. With a single global \(d_{\text{th}}\), the \(\varepsilon\)-graph may thus be **too sparse within shells** at large radii, while at very small radii it may be **over-connected across shells**. Either way, the spectral embedding can degenerate and the **Gap statistic may consistently select \(\hat{k}=1\)**, which matches the behavior we observed in our runs.
+
+We **leave the code unchanged** and record this as a limitation of using one global scale across widely different radii.
