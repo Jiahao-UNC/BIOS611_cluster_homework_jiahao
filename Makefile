@@ -10,12 +10,12 @@ SCRIPTS_DIR   := scripts
 .PHONY: all
 all: help
 
-# ==== Setup ====
+# ==== Setup (install R packages) ====
 .PHONY: setup
 setup:
 	Rscript $(SCRIPTS_DIR)/00_setup.R
 
-# ==== Task 1 (as before) ====
+# ==== Task 1: hypercube + K-means + clusGap ====
 T1_DATA  := $(PROC_DIR)/t1_sim.rds
 T1_TAB   := $(TAB_DIR)/t1_gap_summary.csv
 T1_FAIL  := $(TAB_DIR)/t1_failure_points.csv
@@ -38,36 +38,9 @@ $(TAB_DIR)/t1_gap_summary.csv $(FIG_DIR)/t1_gap_curve.png $(TAB_DIR)/t1_failure_
 .PHONY: t1
 t1: $(T1_TAB) $(T1_FAIL) $(T1_FIG)
 
-# ==== Task 2 (new) ====
-T2_DATA := $(PROC_DIR)/t2_sim.rds
-T2_TAB  := $(TAB_DIR)/t2_gap_summary.csv
-T2_FAIL := $(TAB_DIR)/t2_failure_points.csv
-T2_FIG  := $(FIG_DIR)/t2_gap_curve.png
-
-$(PROC_DIR)/t2_sim.rds: $(SCRIPTS_DIR)/task2_generate.R
-	mkdir -p $(PROC_DIR)
-	Rscript $(SCRIPTS_DIR)/task2_generate.R \
-	  --out $(PROC_DIR)/t2_sim.rds \
-	  --n_shells 4 --k_per_shell 100 --max_from 10 --max_to 1 --step 1 --noise_sd 0.1
-
-$(TAB_DIR)/t2_gap_summary.csv $(FIG_DIR)/t2_gap_curve.png $(TAB_DIR)/t2_failure_points.csv: $(SCRIPTS_DIR)/task2_gap_spectral.R $(PROC_DIR)/t2_sim.rds $(SCRIPTS_DIR)/utils_gap_helpers.R $(SCRIPTS_DIR)/spectral_clustering.R
-	mkdir -p $(TAB_DIR) $(FIG_DIR)
-	Rscript $(SCRIPTS_DIR)/task2_gap_spectral.R \
-	  --in $(PROC_DIR)/t2_sim.rds \
-	  --tab $(TAB_DIR)/t2_gap_summary.csv \
-	  --fig $(FIG_DIR)/t2_gap_curve.png \
-	  --fail_tab $(TAB_DIR)/t2_failure_points.csv \
-	  --kmax_cap 10 \
-	  --B 50 \
-	  --d_threshold 1.0
-
-.PHONY: t2
-t2: $(T2_TAB) $(T2_FAIL) $(T2_FIG)
-
 # ==== Help ====
 .PHONY: help
 help:
-	@echo "make setup   # Install packages"
-	@echo "make t1      # Task1: hypercube + K-means + Gap"
-	@echo "make t2      # Task2: shells + Spectral + Gap"
-	@echo "make         # Show help"
+	@echo "make setup    # Install R packages"
+	@echo "make t1       # Run Task 1: simulate + clusGap + plot (+ failure points)"
+	@echo "make          # Show this help"

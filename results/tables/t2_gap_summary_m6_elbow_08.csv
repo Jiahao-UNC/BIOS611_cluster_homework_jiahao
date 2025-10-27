@@ -1,0 +1,11 @@
+key,max_radius,K_true,Kmax,m_embed,k_hat,selector,underestimate,d_threshold
+R10,10,4,6,6,6,elbow,0,0.8
+R9,9,4,6,6,6,elbow,0,0.8
+R8,8,4,6,6,6,elbow,0,0.8
+R7,7,4,6,6,6,elbow,0,0.8
+R6,6,4,6,6,6,elbow,0,0.8
+R5,5,4,6,6,6,elbow,0,0.8
+R4,4,4,6,6,6,elbow,0,0.8
+R3,3,4,6,6,6,elbow,0,0.8
+R2,2,4,6,6,6,elbow,0,0.8
+R1,1,4,6,6,6,elbow,0,0.8
