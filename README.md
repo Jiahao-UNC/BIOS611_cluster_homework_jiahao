@@ -51,3 +51,8 @@ Main outputs (examples):
 ### Task 2 — Important caveat for 3D shells (fixed epsilon, fixed points per shell)
 
 In the 3D concentric-shell experiment we keep the **distance threshold** \(d_{\text{th}}\) fixed while sweeping the **maximum radius**, and we also keep the **same number of points per shell**. The surface area of a sphere grows like \(4\pi r^2\), so as the radius increases, the **point density on a shell decreases** and the **typical within-shell neighbor spacing increases** (roughly \(\propto r/\sqrt{N}\) for \(N\) points). With a single global \(d_{\text{th}}\), the \(\varepsilon\)-neighborhood graph can therefore **become too sparse within a shell at large radii**, while at very small radii it can **become over-connected and form cross-shell bridges**. Either degeneracy makes the spectral embedding less informative and can drive the **Gap statistic to return \( \hat{k} = 1 \)** across the sweep.
+
+Note (Task 2). To control the radius-dependent sampling density, the generator now supports an optional
+compensation mode: `--compensate ring` (2D rings, points per shell ∝ r) or `--compensate sphere`
+(3D shells, points per shell ∝ r^2). This keeps within-shell neighbor distances more stable across radii
+without changing the spectral clustering code.
